@@ -1,0 +1,25 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: victor-k8s-api-client
+  namespace: default
+spec:
+  secretName: victor-k8s-api-client-cert
+  commonName: victor
+  duration: 24h
+  renewBefore: 8h
+  usages:
+    - digital signature
+    - key encipherment
+    - client auth
+  subject:
+    organizations:
+      - k8s-api-users
+  privateKey:
+    algorithm: RSA
+    size: 4096
+    encoding: PKCS1
+  issuerRef:
+    name: victor-ca
+    kind: ClusterIssuer
+    group: cert-manager.io

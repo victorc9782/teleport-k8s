@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: teleport-cluster
+  namespace: argocd
+
+spec:
+  project: default
+
+  source:
+    repoURL: https://charts.releases.teleport.dev
+    chart: teleport-cluster
+    targetRevision: 18.11.0
+
+    helm:
+      releaseName: teleport-cluster
+
+      valuesObject:
+        clusterName: victor-homelab
+        proxyListenerMode: multiplex
+        acme: true
+        acmeEmail: victorchu2002@gmail.com
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: teleport-cluster
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+    syncOptions:
+      - ServerSideApply=true
+      - CreateNamespace=true

@@ -8,7 +8,6 @@ metadata:
 spec:
   parentRefs:
     - name: nginx-gateway
-      sectionName: http
 
   hostnames:
     - nginx-demo.local

@@ -16,6 +16,22 @@ spec:
       releaseName: local-path-provisioner
 
       valuesObject:
+        tolerations:
+          - key: node-role.kubernetes.io/control-plane
+            operator: Exists
+            effect: NoSchedule
+          - key: node-role.kubernetes.io/master
+            operator: Exists
+        effect: NoSchedule
+        configmap:
+          helperPod:
+            tolerations:
+                - key: node-role.kubernetes.io/control-plane
+                  operator: Exists
+                  effect: NoSchedule
+                - key: node-role.kubernetes.io/master
+                  operator: Exists
+                  effect: NoSchedule
         storageClass:
           create: true
           name: local-path

@@ -21,3 +21,24 @@ spec:
       backendRefs:
         - name: nginx-demo
           port: 80
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: TLSRoute
+
+metadata:
+  name: teleport-cluster
+  namespace: teleport-cluster
+
+spec:
+  parentRefs:
+    - name: nginx-gateway
+      namespace: default
+      sectionName: tls-teleport
+
+  hostnames:
+    - teleport.victor.local
+
+  rules:
+    - backendRefs:
+        - name: teleport-cluster
+          port: 443

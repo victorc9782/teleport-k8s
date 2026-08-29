@@ -16,10 +16,12 @@ spec:
       releaseName: teleport-cluster
 
       valuesObject:
-        clusterName: victor-homelab
+        clusterName: teleport.victor.local
         proxyListenerMode: multiplex
-        acme: true
-        acmeEmail: victorchu2002@gmail.com
+        acme: false
+        # acmeEmail: victorchu2002@gmail.com
+        service:
+          type: LoadBalancer
 
   destination:
     server: https://kubernetes.default.svc

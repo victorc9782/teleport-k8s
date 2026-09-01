@@ -1,3 +1,5 @@
+set -euo pipefail
+
 mkdir -p .kube-certs/victor-admin
 
 openssl genrsa -out .kube-certs/victor-admin/victor.key 4096
@@ -21,6 +23,7 @@ spec:
     - client auth
 EOF
 
+kubectl delete csr victor-admin-k8s-api-access --ignore-not-found
 kubectl apply -f .kube-certs/victor-admin/victor-csr.yaml
 kubectl certificate approve victor-admin-k8s-api-access
 
@@ -28,7 +31,12 @@ kubectl get csr victor-admin-k8s-api-access \
   -o jsonpath='{.status.certificate}' \
   | base64 --decode > .kube-certs/victor-admin/victor.crt
 
-# Build the Non-Admin Kubeconfig
+if [ "$(openssl x509 -noout -modulus -in .kube-certs/victor-admin/victor.crt | openssl md5)" != "$(openssl rsa -noout -modulus -in .kube-certs/victor-admin/victor.key | openssl md5)" ]; then
+  echo "Generated certificate does not match private key" >&2
+  exit 1
+fi
+
+# Build the Admin Kubeconfig
 CURRENT_CONTEXT="$(kubectl config current-context)"
 CLUSTER_NAME="$(kubectl config view -o jsonpath="{.contexts[?(@.name==\"${CURRENT_CONTEXT}\")].context.cluster}")"
 API_SERVER="$(kubectl config view --raw -o jsonpath="{.clusters[?(@.name==\"${CLUSTER_NAME}\")].cluster.server}")"
